@@ -9,7 +9,6 @@ const ResetPassword = () => {
   const [sessionChecked, setSessionChecked] = useState(false);
 
   useEffect(() => {
-    // Supabase automatically restores the session after redirect
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -33,7 +32,7 @@ const ResetPassword = () => {
     try {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
-      setMessage('Password successfully updated! You can now log in.');
+      setMessage('✅ Password successfully updated! You can now log in.');
     } catch (error) {
       console.error('Password update error:', error);
       setMessage(`Error: ${error.message}`);
@@ -43,15 +42,25 @@ const ResetPassword = () => {
   };
 
   if (!sessionChecked) {
-    return <p>Loading...</p>;
+    return (
+      <div className="login-container">
+        <div className="login-header">
+          <h2>UnitMarket</h2>
+          <h3>Checking reset session...</h3>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="reset-password-container">
-      <h2>Reset Your Password</h2>
-      <p>Enter and confirm your new password below.</p>
+    <div className="login-container">
+      <div className="login-header">
+        <h2>UnitMarket</h2>
+        <h3>Reset Your Password</h3>
+        <p>Enter and confirm your new password below:</p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="reset-form">
+      <form onSubmit={handleSubmit} className="login-form">
         <div className="form-group">
           <label>New Password:</label>
           <input
@@ -86,6 +95,15 @@ const ResetPassword = () => {
           {loading ? 'Updating...' : 'Update Password'}
         </button>
       </form>
+
+      <div className="toggle-auth">
+        <p>
+          Remember your password?{' '}
+          <a href="/" className="toggle-btn">
+            Go to Login
+          </a>
+        </p>
+      </div>
     </div>
   );
 };
