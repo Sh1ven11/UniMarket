@@ -6,7 +6,7 @@ const Header = () => {
         <nav className="nav">
           <a href="#support">Support</a>
           <a href="#account">Account</a>
-          <a href="#quick-links">Quick Link</a>
+          <a href="/msg">Messages</a>
         </nav>
       </div>
     </header>

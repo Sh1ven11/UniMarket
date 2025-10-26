@@ -5,6 +5,7 @@ import Footer from "./components/Footer";
 import Login from "./components/Login";
 import ResetPassword from "./components/ResetPassword";
 import ProductsPage from "./components/productsPage";
+import MsgPage from "./components/MsgPage.jsx";
 import { supabase } from "./supabase";
 import "./App.css";
 
@@ -71,7 +72,10 @@ function AppContent() {
         )}
 
         <Routes>
+                    <Route path="/msg" element={!user ? <Login onAuthSuccess={handleAuthSuccess} /> : <MsgPage user={user} onLogout={handleLogout} />} />
+
           <Route path="/" element={!user ? <Login onAuthSuccess={handleAuthSuccess} /> : <ProductsPage user={user} onLogout={handleLogout} />} />
+
           <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </main>

@@ -89,7 +89,7 @@ const Login = ({ onAuthSuccess }) => {
   return (
     <div className="login-container">
       <div className="login-header">
-        <h2>UnitMarket</h2>
+        <h2>UniMarket</h2>
         <h3>{isLogin ? 'Login to your account' : 'Create an account'}</h3>
         <p>Enter your account below:</p>
       </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../supabase";
+import { supabase } from "../supabase"; // The supabase client is imported here
 import NewProduct from "./NewProduct";
 import ProductCard from "./ProductCard";
 
@@ -31,7 +31,7 @@ const ProductsPage = ({ user, onLogout }) => {
   return (
     <div className="login-container">
       <header className="login-header">
-        <h2>Welcome, {user.user_metadata?.name || user.email}!</h2>
+        { <h2>Welcome, {/*user.user_metadata?.name ||*/ user.email}!</h2> }
         <button onClick={onLogout} className="logout-btn">
           Logout
         </button>
@@ -48,12 +48,11 @@ const ProductsPage = ({ user, onLogout }) => {
       </section>
 
      {showAddProduct && (
-  <NewProduct
-    user={user}  // ✅ pass the logged-in user here
-    onAdd={(newProduct) => setProducts([newProduct, ...products])}
-  />
-)}
-
+      <NewProduct
+        user={user}
+        onAdd={(newProduct) => setProducts([newProduct, ...products])}
+      />
+      )}
 
       {/* Products Grid */}
       <section className="browse-products">
@@ -63,7 +62,13 @@ const ProductsPage = ({ user, onLogout }) => {
         ) : (
           <div className="product-grid">
             {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard 
+                key={product.id} 
+                product={product} 
+                // ✨ PASS THE NECESSARY PROPS HERE ✨
+                currentUserId={user.id} 
+                supabase={supabase}
+              />
             ))}
           </div>
         )}
