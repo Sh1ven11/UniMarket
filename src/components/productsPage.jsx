@@ -67,7 +67,6 @@ const ProductsPage = ({ user, onLogout }) => {
                 product={product} 
                 // ✨ PASS THE NECESSARY PROPS HERE ✨
                 currentUserId={user.id} 
-                supabase={supabase}
               />
             ))}
           </div>
