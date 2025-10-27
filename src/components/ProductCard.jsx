@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { MessageSquare, Loader2 } from 'lucide-react';
+import { supabase } from "../supabase"; 
 
 // ProductCard now accepts currentUserId and supabase as props
-const ProductCard = ({ product, currentUserId, supabase }) => {
+const ProductCard = ({ product, currentUserId }) => {
   const [isSending, setIsSending] = useState(false);
   const [chatInitiated, setChatInitiated] = useState(false);
 

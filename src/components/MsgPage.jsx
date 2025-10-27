@@ -11,7 +11,7 @@ import {
 
 // The supabase object must be passed as a prop since MsgPage is now a separate file
 // and cannot access the mock client defined in App.jsx directly.
-const MsgPage = ({ user, onLogout, supabase }) => {
+const MsgPage = ({ user, onLogout }) => {
   const [conversations, setConversations] = useState([]);
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -67,6 +67,7 @@ const MsgPage = ({ user, onLogout, supabase }) => {
             last_message: msg.contffent,
             last_timestamp: msg.created_at,
           };
+          console.log("Added conversation:", conversationsMap[key]);
         }
       });
       
