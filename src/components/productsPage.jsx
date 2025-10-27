@@ -1,27 +1,22 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../supabase"; // The supabase client is imported here
+import { supabase } from "../supabase";
 import NewProduct from "./NewProduct";
 import ProductCard from "./ProductCard";
 
-const ProductsPage = ({ user, onLogout }) => {
+export default function ProductsPage({ user, onLogout }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddProduct, setShowAddProduct] = useState(false);
 
   const fetchProducts = async () => {
     setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .order("id", { ascending: false });
-      if (error) throw error;
-      setProducts(data);
-    } catch (err) {
-      console.error("Error fetching products:", err);
-    } finally {
-      setLoading(false);
-    }
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .order("id", { ascending: false });
+
+    if (!error) setProducts(data || []);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -29,44 +24,47 @@ const ProductsPage = ({ user, onLogout }) => {
   }, []);
 
   return (
-    <div className="login-container">
-      <header className="login-header">
-        { <h2>Welcome, {/*user.user_metadata?.name ||*/ user.email}!</h2> }
+    <div className="page-container">
+
+      {/* HEADER */}
+      <header className="page-header">
+        <h2>Welcome, {user.email} 👋</h2>
         <button onClick={onLogout} className="logout-btn">
           Logout
         </button>
       </header>
 
-      {/* Add Product Section */}
-      <section className="login-form">
-        <button
-          className="primary-btn"
-          onClick={() => setShowAddProduct(!showAddProduct)}
-        >
-          {showAddProduct ? "Close Add Product" : "Add Product"}
+      {/* ADD PRODUCT */}
+      <div className="action-bar">
+        <button className="primary-btn" onClick={() => setShowAddProduct(!showAddProduct)}>
+          {showAddProduct ? "Cancel" : "Add Product"}
         </button>
-      </section>
+      </div>
 
-     {showAddProduct && (
-      <NewProduct
-        user={user}
-        onAdd={(newProduct) => setProducts([newProduct, ...products])}
-      />
+      {showAddProduct && (
+        <div className="add-product-wrapper">
+          <NewProduct
+            user={user}
+            onAdd={(newProduct) => setProducts([newProduct, ...products])}
+          />
+        </div>
       )}
 
-      {/* Products Grid */}
-      <section className="browse-products">
-        <h3>All Products</h3>
+      {/* PRODUCTS GRID */}
+      <section className="products-section">
+        <h3>Available Products</h3>
+
         {loading ? (
-          <p>Loading products...</p>
+          <p className="loading-text">Loading products...</p>
+        ) : products.length === 0 ? (
+          <p className="empty-state">No products listed yet.</p>
         ) : (
           <div className="product-grid">
             {products.map((product) => (
-              <ProductCard 
-                key={product.id} 
-                product={product} 
-                // ✨ PASS THE NECESSARY PROPS HERE ✨
-                currentUserId={user.id} 
+              <ProductCard
+                key={product.id}
+                product={product}
+                currentUserId={user.id}
               />
             ))}
           </div>
@@ -74,6 +72,4 @@ const ProductsPage = ({ user, onLogout }) => {
       </section>
     </div>
   );
-};
-
-export default ProductsPage;
+}

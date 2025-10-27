@@ -11,69 +11,64 @@ export default function MessagePage({ user }) {
     fetchConversations();
   }, []);
 
+  // Fetch all unique conversation groups (product + other user)
   const fetchConversations = async () => {
-    // 1. Fetch all messages involving the current user
     const { data: msgs } = await supabase
       .from("messages")
       .select("*")
-      .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
-      .order("created_at", { ascending: false });
+      .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`);
 
     if (!msgs) return;
 
-    // 2. Group messages by (product_id, other_user_id)
+    // Identify other user + group chats
     const groups = {};
-
     msgs.forEach((m) => {
       const otherUser = m.sender_id === user.id ? m.receiver_id : m.sender_id;
-      const key = `${m.product_id}-${otherUser}`;
-      if (!groups[key]) groups[key] = m; // store latest message
+      const key = `${otherUser}-${m.product_id}`;
+
+      if (!groups[key]) groups[key] = { otherUser, product_id: m.product_id, messages: [] };
+      groups[key].messages.push(m);
     });
 
-    const grouped = Object.values(groups);
+    const convArray = Object.values(groups);
 
-    // Fetch unique user IDs & product IDs
-    const userIds = grouped.map((m) =>
-      m.sender_id === user.id ? m.receiver_id : m.sender_id
-    );
-    const productIds = grouped.map((m) => m.product_id);
-
-    // Fetch names
+    // Fetch names of other users
+    const userIds = convArray.map((c) => c.otherUser);
     const { data: profiles } = await supabase
       .from("profiles")
       .select("id, first_name, last_name")
       .in("id", userIds);
 
     // Fetch product titles
+    const productIds = convArray.map((c) => c.product_id);
     const { data: products } = await supabase
       .from("products")
       .select("id, title")
       .in("id", productIds);
 
-    const finalData = grouped.map((m) => {
-      const otherUserId = m.sender_id === user.id ? m.receiver_id : m.sender_id;
-      const person = profiles?.find((p) => p.id === otherUserId) || {};
-      const product = products?.find((p) => p.id === m.product_id) || {};
+    // Merge data
+    const enhanced = convArray.map((c) => ({
+      ...c,
+      userName:
+        profiles?.find((p) => p.id === c.otherUser)?.first_name +
+        " " +
+        profiles?.find((p) => p.id === c.otherUser)?.last_name,
+      productName: products?.find((p) => p.id === c.product_id)?.title || "Unknown Product",
+    }));
 
-      return {
-        ...m,
-        userName: `${person.first_name || ""} ${person.last_name || ""}`,
-        productName: product.title || "Unknown Product",
-        otherUserId,
-      };
-    });
-
-    setConversations(finalData);
+    setConversations(enhanced);
   };
 
-  const loadMessages = async (conv) => {
-    setActiveChat(conv);
+  const fetchMessages = async (chat) => {
+    setActiveChat(chat);
 
     const { data } = await supabase
       .from("messages")
       .select("*")
-      .eq("product_id", conv.product_id)
-      .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
+      .or(
+        `and(sender_id.eq.${user.id},receiver_id.eq.${chat.otherUser}),and(sender_id.eq.${chat.otherUser},receiver_id.eq.${user.id})`
+      )
+      .eq("product_id", chat.product_id)
       .order("created_at", { ascending: true });
 
     setMessages(data || []);
@@ -82,44 +77,43 @@ export default function MessagePage({ user }) {
   const sendMessage = async () => {
     if (!inputMessage.trim() || !activeChat) return;
 
-    const newMessage = {
+    const message = {
       product_id: activeChat.product_id,
       sender_id: user.id,
-      receiver_id: activeChat.otherUserId,
-      text: inputMessage.trim(),
+      receiver_id: activeChat.otherUser,
+      content: inputMessage.trim(),
     };
 
-    await supabase.from("messages").insert([newMessage]);
-
+    await supabase.from("messages").insert([message]);
     setInputMessage("");
-    loadMessages(activeChat);
+    fetchMessages(activeChat);
   };
 
   return (
     <div className="chat-container">
 
-      {/* LEFT SIDEBAR */}
+      {/* LEFT PANEL */}
       <div className="chat-sidebar">
-        <h2>Chats</h2>
+        <h2>Your Conversations</h2>
 
-        {conversations.map((c) => (
+        {conversations.map((c, i) => (
           <div
-            key={c.id}
-            className={`conversation-item ${activeChat?.id === c.id ? "active" : ""}`}
-            onClick={() => loadMessages(c)}
+            key={i}
+            className={`conversation-item ${activeChat?.otherUser === c.otherUser && activeChat?.product_id === c.product_id ? "active" : ""}`}
+            onClick={() => fetchMessages(c)}
           >
             <strong>{c.userName}</strong>
-            <div className="small">Product: {c.productName}</div>
+            <p>{c.productName}</p>
           </div>
         ))}
       </div>
 
-      {/* MAIN CHAT */}
+      {/* RIGHT PANEL */}
       <div className="chat-main">
         {activeChat ? (
           <>
             <div className="chat-header">
-              Chat with {activeChat.userName} — {activeChat.productName}
+              {activeChat.productName} — Chat with {activeChat.userName}
             </div>
 
             <div className="chat-messages">
@@ -130,7 +124,7 @@ export default function MessagePage({ user }) {
                     m.sender_id === user.id ? "message-sent" : "message-received"
                   }`}
                 >
-                  {m.text}
+                  {m.content}
                 </div>
               ))}
             </div>
@@ -149,7 +143,6 @@ export default function MessagePage({ user }) {
           <div className="chat-placeholder">Select a conversation</div>
         )}
       </div>
-
     </div>
   );
 }
