@@ -321,3 +321,120 @@ body {
 .nav a:hover {
   opacity: 0.6;
 }
+/* Login Container */
+.login-container {
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+  background: #ffffff;
+  font-family: Arial, sans-serif;
+}
+
+/* Header Text */
+.login-header h2 {
+  text-align: center;
+  margin-bottom: 5px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.login-header h3 {
+  text-align: center;
+  margin-bottom: 5px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.login-header p {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #666;
+}
+
+/* Form fields */
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  outline: none;
+}
+
+.form-group input:focus {
+  border-color: #000;
+}
+
+/* Buttons */
+.submit-btn, .toggle-btn {
+  background: #000;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.submit-btn:hover, .toggle-btn:hover {
+  background: #333;
+}
+
+.toggle-btn {
+  background: transparent;
+  color: #000;
+  text-decoration: underline;
+  border: none;
+  padding: 4px;
+}
+
+/* Forgot password text */
+.forgot-password {
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* Success & Error Messages */
+.message {
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.message.success {
+  background: #e9ffe9;
+  color: #0a8a0a;
+}
+
+.message.error {
+  background: #ffe9e9;
+  color: #c20000;
+}
+
+/* Toggle auth link */
+.toggle-auth {
+  margin-top: 20px;
+  text-align: center;
+}

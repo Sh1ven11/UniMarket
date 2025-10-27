@@ -72,7 +72,7 @@ function AppContent() {
         )}
 
         <Routes>
-                    <Route path="/msg" element={!user ? <Login onAuthSuccess={handleAuthSuccess} /> : <MsgPage user={user} onLogout={handleLogout} />} />
+          <Route path="/msg" element={!user ? <Login onAuthSuccess={handleAuthSuccess} /> : <MsgPage user={user} onLogout={handleLogout} />} />
 
           <Route path="/" element={!user ? <Login onAuthSuccess={handleAuthSuccess} /> : <ProductsPage user={user} onLogout={handleLogout} />} />
 
