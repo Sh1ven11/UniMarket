@@ -5,7 +5,7 @@ const Header = () => {
         <h1>UniMarket</h1>
         <nav className="nav">
           <a href="#support">Support</a>
-          <a href="#account">Account</a>
+          <a href="/">Homepage</a>
           <a href="/msg">Messages</a>
         </nav>
       </div>
