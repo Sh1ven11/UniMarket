@@ -2,15 +2,16 @@ const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-content">
+
         <div className="footer-section">
           <h4>Support</h4>
-          <p>It is big, once it thinks, on this, temperature, reaching digital count within square shots</p>
+          <p>We’re here to help! If you have any questions or issues, reach out to our support team anytime.</p>
         </div>
         
         <div className="footer-section">
           <h4>Account</h4>
           <div className="account-info">
-            <div className="account-logo">My Account logo / Register</div>
+            <div className="account-logo">My Account / Register</div>
           </div>
         </div>
         
@@ -22,6 +23,7 @@ const Footer = () => {
             <a href="#info">Info External</a>
           </div>
         </div>
+
       </div>
     </footer>
   );
